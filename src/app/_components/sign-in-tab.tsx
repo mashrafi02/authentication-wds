@@ -38,7 +38,7 @@ const SignInTab = () => {
             {...data, callbackURL: '/'},
             {
                 onError: error => {
-                    toast.error(error.error?.message || 'Failed to Sign Up')
+                    toast.error(error.error?.message || 'Failed to Sign In')
                 },
                 onSuccess: () => {
                     toast.success('Successfully Signed In');
