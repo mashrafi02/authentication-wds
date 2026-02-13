@@ -1,4 +1,4 @@
-
+"use client"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,26 +6,45 @@ import SignUpTab from "@/app/_components/sign-up-tab"
 import SignInTab from "@/app/_components/sign-in-tab"
 import { Separator } from "@/components/ui/separator"
 import SocialAuthButtons from "@/app/_components/social-auth-buttons"
-import { useEffect } from "react"
-import { authClient } from "@/lib/auth-client"
+import EmailVerification from "@/app/_components/email-verification"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { authClient } from "@/lib/auth-client"
 
+type Tab = "signin" | "signup" | "email-verification";
 
 const Login = () => {
 
     const router = useRouter();
-    useEffect( () => {
-        authClient.getSession().then(session => {
-            if(session.data !== null) router.push('/')
-        })
-    }, [router])
+    const [email, setEmail] = useState<string>("");
+    const [selectedTab, setSelectedTab] = useState<Tab>("signin");
+    const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
-  return (
-    <Tabs defaultValue="signin" className="max-auto w-full my-6 px-4">
-        <TabsList>
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-        </TabsList>
+    useEffect(() => {
+        authClient.getSession().then(session => {
+            if (session.data !== null ) {
+                setLoggedIn(true);
+                return router.push('/')
+            }
+        })
+    })
+
+    function openEmailVerificationTab(email: string) {
+        setEmail(email);
+        setSelectedTab("email-verification")
+    }
+
+
+  return !loggedIn && (
+    <Tabs value={selectedTab} onValueChange={t => setSelectedTab(t as Tab)} className="max-auto w-full my-6 px-4">
+        {
+            (selectedTab === "signin" || selectedTab === "signup") && (
+                <TabsList>
+                    <TabsTrigger value="signin">Sign In</TabsTrigger>
+                    <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                </TabsList>
+            )
+        }
         
         <TabsContent value="signin">
             <Card className="w-md mx-auto mt-12">
@@ -33,7 +52,7 @@ const Login = () => {
                     <CardTitle>Sign In</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <SignInTab />
+                    <SignInTab openEmailVerificationTab={openEmailVerificationTab}/>
                 </CardContent>
 
                 <Separator />
@@ -41,7 +60,6 @@ const Login = () => {
                 <CardFooter className="grid grid-cols-2 gap-3">
                     <SocialAuthButtons />
                 </CardFooter>
-            
             </Card>
         </TabsContent>
 
@@ -51,7 +69,7 @@ const Login = () => {
                     <CardTitle>Sign Up</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <SignUpTab />
+                    <SignUpTab openEmailVerificationTab={openEmailVerificationTab}/>
                 </CardContent>
 
                 <Separator />
@@ -61,8 +79,20 @@ const Login = () => {
                 </CardFooter>
             </Card>
         </TabsContent>
+
+        <TabsContent value="email-verification">
+            <Card className="w-md mx-auto mt-12">
+                <CardHeader className="text-2xl font-bold">
+                    <CardTitle>Verify your email</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <EmailVerification email={email} />
+                </CardContent>
+            </Card>
+        </TabsContent>
     </Tabs>
   )
+    
 }
 
 export default Login

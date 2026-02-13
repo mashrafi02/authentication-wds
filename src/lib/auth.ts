@@ -3,10 +3,24 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db/db";
 import { nextCookies } from "better-auth/next-js";
 import { BETTER_AUTH_BASE_URL, BETTER_AUTH_SECRET, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "../../constants";
+import { sendVerificationEmail } from "./emails/sendVerificationEmail";
+import { sendPasswordResetEmail } from "./emails/sendPasswordResetEmail";
 
 export const auth = betterAuth({
   emailAndPassword: { 
-    enabled: true, 
+    enabled: true,
+    requireEmailVerification:true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendPasswordResetEmail( user, url )
+    }  
+  },
+  emailVerification: {
+    autoSignInAfterVerification: true,
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendVerificationEmail(user, url)
+    },
+    expiresIn: 60*60
   },
   socialProviders: {
     github: { 
