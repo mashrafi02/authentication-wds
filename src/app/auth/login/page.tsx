@@ -9,7 +9,7 @@ import SocialAuthButtons from "@/app/_components/social-auth-buttons"
 import EmailVerification from "@/app/_components/email-verification"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth/auth-client"
 import ForgotPassword from "@/app/_components/forgot-password"
 
 type Tab = "signin" | "signup" | "email-verification" | "forgot-password";

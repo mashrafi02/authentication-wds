@@ -1,10 +1,10 @@
 "use client"
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import {
   SUPPORTED_OAUTH_PROVIDER_DETAILS,
   SUPPORTED_OAUTH_PROVIDERS,
-} from "@/lib/o-auth-provider";
+} from "@/lib/auth/o-auth-provider";
 import { ActionButton } from "@/components/ActionButton";
 
 const SocialAuthButtons = () => {

@@ -1,7 +1,7 @@
 "use client"
 
 import { ActionButton } from "@/components/ActionButton"
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth/auth-client"
 import { useEffect, useRef, useState } from "react"
 
 

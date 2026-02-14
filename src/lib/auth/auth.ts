@@ -2,14 +2,22 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db/db";
 import { nextCookies } from "better-auth/next-js";
-import { BETTER_AUTH_BASE_URL, BETTER_AUTH_SECRET, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "../../constants";
-import { sendVerificationEmail } from "./emails/sendVerificationEmail";
-import { sendPasswordResetEmail } from "./emails/sendPasswordResetEmail";
+import { BETTER_AUTH_BASE_URL, BETTER_AUTH_SECRET, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "../../../constants";
+import { sendVerificationEmail } from "../emails/sendVerificationEmail";
+import { sendPasswordResetEmail } from "../emails/sendPasswordResetEmail";
 import { createAuthMiddleware } from "better-auth/api";
-import WelcomeEmail from "@/components/emails/VerificationEmail";
-import { sendWelcomeEmail } from "./emails/sendWelcomeEmail";
+import { sendWelcomeEmail } from "../emails/sendWelcomeEmail";
+
 
 export const auth = betterAuth({
+  user: {
+    additionalFields: {
+      favoriteNumber: {
+        type: "number",
+        required: true
+      }
+    }
+  },
   emailAndPassword: { 
     enabled: true,
     requireEmailVerification:true,
@@ -29,11 +37,21 @@ export const auth = betterAuth({
   socialProviders: {
     github: { 
         clientId: GITHUB_CLIENT_ID as string,
-        clientSecret: GITHUB_CLIENT_SECRET as string
+        clientSecret: GITHUB_CLIENT_SECRET as string,
+        mapProfileToUser: (profile) => {
+          return {
+            favoriteNumber: Number(profile.public_repos) || 0
+          }
+        }
     }, 
     discord: { 
         clientId: DISCORD_CLIENT_ID as string, 
         clientSecret: DISCORD_CLIENT_SECRET as string, 
+        mapProfileToUser: () => {
+          return {
+            favoriteNumber:0
+          }
+        }
     },
 },
   session: {
