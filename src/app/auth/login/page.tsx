@@ -10,8 +10,9 @@ import EmailVerification from "@/app/_components/email-verification"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { authClient } from "@/lib/auth-client"
+import ForgotPassword from "@/app/_components/forgot-password"
 
-type Tab = "signin" | "signup" | "email-verification";
+type Tab = "signin" | "signup" | "email-verification" | "forgot-password";
 
 const Login = () => {
 
@@ -34,6 +35,14 @@ const Login = () => {
         setSelectedTab("email-verification")
     }
 
+    function openSignInTab(){
+        setSelectedTab("signin")
+    }
+
+    function openForgotPasswordTab () {
+        setSelectedTab("forgot-password")
+    }
+
 
   return !loggedIn && (
     <Tabs value={selectedTab} onValueChange={t => setSelectedTab(t as Tab)} className="max-auto w-full my-6 px-4">
@@ -52,7 +61,7 @@ const Login = () => {
                     <CardTitle>Sign In</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <SignInTab openEmailVerificationTab={openEmailVerificationTab}/>
+                    <SignInTab openEmailVerificationTab={openEmailVerificationTab} openForgotPasswordTab={openForgotPasswordTab}/>
                 </CardContent>
 
                 <Separator />
@@ -87,6 +96,17 @@ const Login = () => {
                 </CardHeader>
                 <CardContent>
                     <EmailVerification email={email} />
+                </CardContent>
+            </Card>
+        </TabsContent>
+
+        <TabsContent value="forgot-password">
+            <Card className="w-md mx-auto mt-12">
+                <CardHeader className="text-2xl font-bold">
+                    <CardTitle>Forgot Password</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ForgotPassword openSignInTab={openSignInTab} />
                 </CardContent>
             </Card>
         </TabsContent>

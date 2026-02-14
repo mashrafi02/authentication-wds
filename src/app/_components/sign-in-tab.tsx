@@ -19,7 +19,9 @@ const signInSchema = z.object({
 
 type SignInForm = z.infer<typeof signInSchema>
 
-const SignInTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email :string) => void}) => {
+const SignInTab = ({openEmailVerificationTab, openForgotPasswordTab}:
+                {openEmailVerificationTab: (email :string) => void,
+                openForgotPasswordTab: () => void}) => {
 
     const router = useRouter();
   
@@ -74,7 +76,16 @@ const SignInTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email 
                 name="password"
                 render={({field}) => (
                     <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <div className="flex justify-between items-center">
+                            <FormLabel>Password</FormLabel>
+                            <Button type="button"
+                                    variant={"link"}
+                                    size={"sm"}
+                                    className="text-sm font-normal underline"
+                                    onClick={openForgotPasswordTab}>
+                                Forgot Password?
+                            </Button>
+                        </div>
                         <FormControl>
                             <PasswordInput {...field}/>
                         </FormControl>

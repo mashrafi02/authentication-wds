@@ -5,6 +5,9 @@ import { nextCookies } from "better-auth/next-js";
 import { BETTER_AUTH_BASE_URL, BETTER_AUTH_SECRET, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "../../constants";
 import { sendVerificationEmail } from "./emails/sendVerificationEmail";
 import { sendPasswordResetEmail } from "./emails/sendPasswordResetEmail";
+import { createAuthMiddleware } from "better-auth/api";
+import WelcomeEmail from "@/components/emails/VerificationEmail";
+import { sendWelcomeEmail } from "./emails/sendWelcomeEmail";
 
 export const auth = betterAuth({
   emailAndPassword: { 
@@ -12,7 +15,8 @@ export const auth = betterAuth({
     requireEmailVerification:true,
     sendResetPassword: async ({ user, url }) => {
       await sendPasswordResetEmail( user, url )
-    }  
+    },
+    resetPasswordTokenExpiresIn: 60 * 5, 
   },
   emailVerification: {
     autoSignInAfterVerification: true,
@@ -43,5 +47,19 @@ export const auth = betterAuth({
   baseURL: BETTER_AUTH_BASE_URL,
   database: drizzleAdapter(db, { 
     provider: "pg", 
-  }), 
+  }),
+  hooks: {
+    after: createAuthMiddleware( async ctx => {
+        if (ctx.path.startsWith("/sign-up")) {
+          const user = ctx.context.newSession?.user ?? {
+            name : ctx.body.name,
+            email : ctx.body.email
+          }
+
+          if(user != null) {
+            await sendWelcomeEmail(user)
+          }
+        }
+    })
+  } 
 });

@@ -1,17 +1,16 @@
+import WelcomeEmail from "@/components/emails/WelcomeEamil";
 import { resend } from "@/lib/resend";
-import ResetPasswordEmail from "@/components/emails/ResetPasswordEmail";
 
 
-export async function sendPasswordResetEmail(
+export async function sendWelcomeEmail(
     user: { email: string; name: string },
-    url: string
 ): Promise<unknown>{
     try {
         await resend.emails.send({
             from: 'onboarding@resend.dev',
             to: user.email,
-            subject: 'Better auth WDS Reset Password',
-            react: ResetPasswordEmail({user, url}),
+            subject: 'Better Auth WDS Welcome with warmth',
+            react: WelcomeEmail({user}),
             });
         return {
             success: true,
@@ -19,9 +18,6 @@ export async function sendPasswordResetEmail(
         }
     } catch (emailError) {
         console.error("email send error", emailError);
-        return {
-            success: false,
-            message: 'Failed to send email'
-        }
+        throw emailError
     }
 }

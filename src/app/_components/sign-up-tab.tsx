@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
 
 const signUpSchema = z.object({
     name: z.string().min(4),
@@ -21,8 +21,6 @@ const signUpSchema = z.object({
 type SignUpForm = z.infer<typeof signUpSchema>
 
 const SignUpTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email :string) => void}) => {
-
-    const router = useRouter();
   
     const form = useForm<SignUpForm>({
         resolver: zodResolver(signUpSchema),
@@ -44,7 +42,6 @@ const SignUpTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email 
                 },
                 onSuccess: () => {
                     toast.success('Successfully Signed Up');
-                    router.push("/")
                 }
             }
         )
