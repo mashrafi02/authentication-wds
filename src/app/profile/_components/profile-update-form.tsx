@@ -5,50 +5,68 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { authClient } from "@/lib/auth/auth-client";
 import { toast } from "sonner";
 import { NumberInput } from "@/components/ui/number-input";
+import { useRouter } from "next/navigation";
 
 
-const signUpSchema = z.object({
+const updateProfileSchema = z.object({
     name: z.string().min(4),
     email: z.email(),
-    password: z.string().min(8),
     favoriteNumber: z.number().int(),
 })
 
-type SignUpForm = z.infer<typeof signUpSchema>
+type UpdateProfileForm = z.infer<typeof updateProfileSchema>
 
-const SignUpTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email :string) => void}) => {
+const ProfileUpdateForm = ({ user }:{
+    user: { id: string, name: string, email: string, favoriteNumber?: number}
+}) => {
+
+    const router = useRouter();
   
-    const form = useForm<SignUpForm>({
-        resolver: zodResolver(signUpSchema),
-        defaultValues: {
-            name: "",
-            email: "",
-            password: ""
-        },
+    const form = useForm<UpdateProfileForm>({
+        resolver: zodResolver(updateProfileSchema),
+        defaultValues: user
     })
 
     const {isSubmitting} = form.formState;
 
-    async function handleSignUp(data: SignUpForm) {
-        const res = await authClient.signUp.email(
-            {...data, callbackURL: '/'},
-            {
-                onError: error => {
-                    toast.error(error.error?.message || 'Failed to Sign Up')
-                },
-                onSuccess: () => {
-                    toast.success('Successfully Signed Up');
-                }
+    async function handleUpdateProfile(data: UpdateProfileForm) {
+        const promises = [ 
+            authClient.updateUser({
+                name: data.name,
+                favoriteNumber: data.favoriteNumber
+            })
+        ]
+
+        if( data.email !== user.email){
+            promises.push(
+                authClient.changeEmail({
+                    newEmail: data.email,
+                    callbackURL: "/profile"
+                })
+            )
+        }
+
+        const res = await Promise.all(promises)
+
+        const updateUserResult = res[0];
+        const updateEmailResult = res[1];
+
+        if(updateUserResult?.error) {
+            toast.error(updateUserResult.error.message || "Failed to update profile")
+        } else if ( updateEmailResult?.error ) {
+            toast.error(updateEmailResult.error.message || "Failed to Update Email address")
+        } else {
+            if (data.email !== user.email) {
+                toast.success("Verify your new email address to complete the change")
+            } else {
+                toast.success("Profile update successfully")
             }
-        )
-        if(res.error === null && !res.data.user.emailVerified) {
-            openEmailVerificationTab(data.email)
+            router.refresh();
         }
     }
 
@@ -56,7 +74,7 @@ const SignUpTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email 
 
   return (
     <Form {...form}>
-        <form className="space-y-4" onSubmit={form.handleSubmit(handleSignUp)}>
+        <form className="space-y-4" onSubmit={form.handleSubmit(handleUpdateProfile)}>
             <FormField
                 control={form.control}
                 name="name"
@@ -83,19 +101,6 @@ const SignUpTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email 
                     </FormItem>
                 )} 
             />
-            <FormField
-                control={form.control}
-                name="password"
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                            <PasswordInput {...field}/>
-                        </FormControl>
-                        <FormMessage/>
-                    </FormItem>
-                )} 
-            />
 
             <FormField
                 control={form.control}
@@ -113,7 +118,7 @@ const SignUpTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email 
 
             <Button type="submit" disabled={isSubmitting} className="w-full">
                 <LoadingSwap isLoading={isSubmitting}>
-                    Sign Up
+                    Update Profile
                 </LoadingSwap>    
             </Button>
         </form>
@@ -121,4 +126,4 @@ const SignUpTab = ({openEmailVerificationTab}:{openEmailVerificationTab: (email 
   )
 }
 
-export default SignUpTab
+export default ProfileUpdateForm
