@@ -1,12 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/lib/auth/auth"
-import { ArrowLeft, Key, LinkIcon, Shield, Trash2, User } from "lucide-react";
+import { ArrowLeft, Key, LinkIcon, Loader2Icon, Shield, Trash2, User } from "lucide-react";
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import ProfileUpdateForm from "./_components/profile-update-form";
+import { ReactNode, Suspense } from "react";
+import SecurityTab from "./_components/security-tab";
+import SessionsTab from "./_components/sessons-tab";
 
 export default async function Profile() {
 
@@ -77,7 +80,32 @@ export default async function Profile() {
                         </CardContent>
                     </Card>
                 </TabsContent>
+
+                <TabsContent value="security">
+                    <Card>
+                        <CardContent>
+                            <LoadingSuspense>
+                                <SecurityTab email={session.user.email} />
+                            </LoadingSuspense>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="sessions">
+                    <LoadingSuspense>
+                        <SessionsTab currentSession={session.session.token} />
+                    </LoadingSuspense>
+                </TabsContent>
             </Tabs>
         </div>
+    )
+}
+
+
+export function LoadingSuspense({children} : { children: ReactNode }){
+    return (
+        <Suspense fallback={ <Loader2Icon className="size-20 animate-spin"/> }>
+            { children }
+        </Suspense>
     )
 }
