@@ -7,6 +7,7 @@ import { sendVerificationEmail } from "../emails/sendVerificationEmail";
 import { sendPasswordResetEmail } from "../emails/sendPasswordResetEmail";
 import { createAuthMiddleware } from "better-auth/api";
 import { sendWelcomeEmail } from "../emails/sendWelcomeEmail";
+import { sendDelteAccountVerificationEmail } from "../emails/sendDelteAccountVerificationEmail";
 
 
 export const auth = betterAuth({
@@ -15,6 +16,12 @@ export const auth = betterAuth({
       enabled: true,
       sendChangeEmailVerification: async ( { user, url, newEmail } ) => {
         await sendVerificationEmail(user={...user, email:newEmail}, url )
+      }
+    },
+    deleteUser: {
+      enabled: true,
+      sendDeleteAccountVerification: async ({ user, url }) => {
+        await sendDelteAccountVerificationEmail( user, url )
       }
     },
     additionalFields: {

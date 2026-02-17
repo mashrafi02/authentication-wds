@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/lib/auth/auth"
 import { ArrowLeft, Key, LinkIcon, Loader2Icon, Shield, Trash2, User } from "lucide-react";
@@ -10,6 +10,8 @@ import ProfileUpdateForm from "./_components/profile-update-form";
 import { ReactNode, Suspense } from "react";
 import SecurityTab from "./_components/security-tab";
 import SessionsTab from "./_components/sessons-tab";
+import AccountsTab from "./_components/accounts-tab";
+import AccountDeletion from "./_components/AccountDeletion";
 
 export default async function Profile() {
 
@@ -95,6 +97,23 @@ export default async function Profile() {
                     <LoadingSuspense>
                         <SessionsTab currentSession={session.session.token} />
                     </LoadingSuspense>
+                </TabsContent>
+
+                <TabsContent value="accounts">
+                    <LoadingSuspense>
+                        <AccountsTab />
+                    </LoadingSuspense>
+                </TabsContent>
+
+                <TabsContent value="danger">
+                    <Card className="border border-destructive">
+                        <CardHeader>
+                            <CardTitle className="text-destructive">Danger</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <AccountDeletion />
+                        </CardContent>
+                    </Card>
                 </TabsContent>
             </Tabs>
         </div>
