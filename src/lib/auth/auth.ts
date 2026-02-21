@@ -8,9 +8,11 @@ import { sendPasswordResetEmail } from "../emails/sendPasswordResetEmail";
 import { createAuthMiddleware } from "better-auth/api";
 import { sendWelcomeEmail } from "../emails/sendWelcomeEmail";
 import { sendDelteAccountVerificationEmail } from "../emails/sendDelteAccountVerificationEmail";
+import { twoFactor } from "better-auth/plugins";
 
 
 export const auth = betterAuth({
+  appName:"Better Auth WDS",
   user: {
     changeEmail: {
       enabled: true,
@@ -73,7 +75,10 @@ export const auth = betterAuth({
         maxAge: 60
     }
   },
-  plugins: [nextCookies()],
+  plugins: [
+    nextCookies(),
+    twoFactor()
+  ],
   secret: BETTER_AUTH_SECRET,
   baseURL: BETTER_AUTH_BASE_URL,
   database: drizzleAdapter(db, { 

@@ -87,7 +87,7 @@ export default async function Profile() {
                     <Card>
                         <CardContent>
                             <LoadingSuspense>
-                                <SecurityTab email={session.user.email} />
+                                <SecurityTab email={session.user.email} isTwoFactorEnabled={session.user.twoFactorEnabled ?? false}/>
                             </LoadingSuspense>
                         </CardContent>
                     </Card>
