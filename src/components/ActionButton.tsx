@@ -24,6 +24,7 @@ interface ActionButtonProps {
   asChild?: boolean;
   children?: React.ReactNode;
   disabled?: boolean;
+  className?: string;
   requireAreYouSure?: boolean;
   variant?:
     | "link"
@@ -54,6 +55,7 @@ export const ActionButton = ({
   asChild = false,
   children,
   disabled = false,
+  className= "",
   requireAreYouSure = false, // ✅ default false
   ...props
 }: ActionButtonProps) => {
@@ -87,6 +89,7 @@ export const ActionButton = ({
         asChild={asChild}
         disabled={isLoading || disabled}
         onClick={handleAction}
+        className={className}
       >
         <LoadingSwap isLoading={isLoading}>
           {children}

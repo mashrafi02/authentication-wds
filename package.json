@@ -17,6 +17,7 @@
     "@arcjet/inspect": "^1.1.0",
     "@arcjet/ip": "^1.1.0",
     "@arcjet/next": "^1.1.0",
+    "@better-auth/passkey": "^1.4.18",
     "@hookform/resolvers": "^5.2.2",
     "@neondatabase/serverless": "^1.0.2",
     "@react-email/components": "^1.0.7",

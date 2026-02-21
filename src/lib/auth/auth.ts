@@ -9,6 +9,7 @@ import { createAuthMiddleware } from "better-auth/api";
 import { sendWelcomeEmail } from "../emails/sendWelcomeEmail";
 import { sendDelteAccountVerificationEmail } from "../emails/sendDelteAccountVerificationEmail";
 import { twoFactor } from "better-auth/plugins";
+import { passkey } from "@better-auth/passkey"
 
 
 export const auth = betterAuth({
@@ -77,7 +78,8 @@ export const auth = betterAuth({
   },
   plugins: [
     nextCookies(),
-    twoFactor()
+    twoFactor(),
+    passkey()
   ],
   secret: BETTER_AUTH_SECRET,
   baseURL: BETTER_AUTH_BASE_URL,

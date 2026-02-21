@@ -5,11 +5,16 @@ import SetPasswordButton from "./security-tab-components/SetPasswordButton";
 import ChangePasswordForm from "./security-tab-components/change-password-form";
 import { Badge } from "@/components/ui/badge";
 import TwoFactorAuth from "./security-tab-components/tow-factor-auth";
+// import PasskeyManagement from "./security-tab-components/pass-key-management";
 
 
 
 export default async function SecurityTab ({ email, isTwoFactorEnabled } : { email: string, isTwoFactorEnabled: boolean }) {
-    const accounts = await auth.api.listUserAccounts({ headers: await headers() });
+
+    const [passkeys, accounts] = await Promise.all([
+        auth.api.listPasskeys({ headers: await headers() }),
+        auth.api.listUserAccounts({ headers: await headers() })
+    ])
     const hasPasswordAccount =  accounts.some(acc => acc.providerId === "credential");
 
     return (
@@ -57,6 +62,17 @@ export default async function SecurityTab ({ email, isTwoFactorEnabled } : { ema
                     </Card>
                 )
             }
+
+
+            {/* its not working on linux  */}
+            {/* <Card>
+                <CardHeader>
+                    <CardTitle>Passkeys</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <PasskeyManagement passkeys={passkeys} />
+                </CardContent>
+            </Card> */}
         </div>
     )
 }
