@@ -12,6 +12,7 @@ import SecurityTab from "./_components/security-tab";
 import SessionsTab from "./_components/sessons-tab";
 import AccountsTab from "./_components/accounts-tab";
 import AccountDeletion from "./_components/AccountDeletion";
+import { Badge } from "@/components/ui/badge";
 
 export default async function Profile() {
 
@@ -44,7 +45,7 @@ export default async function Profile() {
                             <h1 className="text-3xl font-bold">
                                 { session.user.name || "User Profile"}
                             </h1>
-                            {/* TODO: Need to create badge  */}
+                            <Badge>{session.user.role}</Badge>
                         </div>
                         <p className="text-muted-foreground">{ session.user.email }</p>
                     </div>

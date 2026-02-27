@@ -103,7 +103,7 @@ const SignInTab = ({openEmailVerificationTab, openForgotPasswordTab}:
                 </Button>
             </form>
         </Form>
-        <PasskeyButton />
+        {/* <PasskeyButton /> */}
     </div>
   )
 }

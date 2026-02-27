@@ -9,7 +9,9 @@ import { createAuthMiddleware } from "better-auth/api";
 import { sendWelcomeEmail } from "../emails/sendWelcomeEmail";
 import { sendDelteAccountVerificationEmail } from "../emails/sendDelteAccountVerificationEmail";
 import { twoFactor } from "better-auth/plugins";
+import { admin as adminPlugin } from "better-auth/plugins/admin";
 import { passkey } from "@better-auth/passkey"
+import { user, ac, admin } from "@/components/auth/permissions";
 
 
 export const auth = betterAuth({
@@ -79,7 +81,11 @@ export const auth = betterAuth({
   plugins: [
     nextCookies(),
     twoFactor(),
-    passkey()
+    passkey(),
+    adminPlugin({
+      ac,
+      roles: {admin, user}
+    })
   ],
   secret: BETTER_AUTH_SECRET,
   baseURL: BETTER_AUTH_BASE_URL,
