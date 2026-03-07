@@ -1,0 +1,46 @@
+"use client"
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authClient } from "@/lib/auth/auth-client"
+import MembersTab from "./MembersTab";
+import InvitationsTab from "./InvitationsTab";
+
+
+const OrganizationTabs = () => {
+
+  const { data: activeOrganization } = authClient.useActiveOrganization();
+  
+  return (
+    <div className="space-y-4">
+        {
+          activeOrganization && (
+            <Tabs defaultValue="members" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="members">Members</TabsTrigger>
+                <TabsTrigger value="invitations">Invitations</TabsTrigger>
+                <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
+              </TabsList>
+              <Card>
+                <CardContent>
+                  <TabsContent value="members">
+                    <MembersTab /> 
+                  </TabsContent>
+
+                  <TabsContent value="invitations">
+                    <InvitationsTab />
+                  </TabsContent>
+
+                  <TabsContent value="subscriptions">
+                    
+                  </TabsContent>
+                </CardContent>
+              </Card>
+            </Tabs>
+          )
+        }
+    </div>
+  )
+}
+
+export default OrganizationTabs

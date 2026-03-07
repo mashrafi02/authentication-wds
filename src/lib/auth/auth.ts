@@ -8,10 +8,13 @@ import { sendPasswordResetEmail } from "../emails/sendPasswordResetEmail";
 import { createAuthMiddleware } from "better-auth/api";
 import { sendWelcomeEmail } from "../emails/sendWelcomeEmail";
 import { sendDelteAccountVerificationEmail } from "../emails/sendDelteAccountVerificationEmail";
-import { twoFactor } from "better-auth/plugins";
+import { organization, twoFactor } from "better-auth/plugins";
 import { admin as adminPlugin } from "better-auth/plugins/admin";
 import { passkey } from "@better-auth/passkey"
 import { user, ac, admin } from "@/components/auth/permissions";
+import { sendOrganizationInviteEmail } from "../emails/sendOrganizationInviteEmail";
+import { desc, eq } from "drizzle-orm";
+import { member } from "@/db/schemas/auth-schema";
 
 
 export const auth = betterAuth({
@@ -85,7 +88,17 @@ export const auth = betterAuth({
     adminPlugin({
       ac,
       roles: {admin, user}
-    })
+    }),
+    organization({
+      sendInvitationEmail: async ({ email, organization, inviter, invitation }) => {
+        await sendOrganizationInviteEmail({
+          invitation,
+          inviter: inviter.user,
+          organization,
+          email
+        })
+      }
+    }) // you can setup same things in organization as the adminPlugin
   ],
   secret: BETTER_AUTH_SECRET,
   baseURL: BETTER_AUTH_BASE_URL,
@@ -105,5 +118,25 @@ export const auth = betterAuth({
           }
         }
     })
+  },
+  databaseHooks: {
+    session: {
+      create: {
+        before: async userSession => {
+          const membership = await db.query.member.findFirst({
+            where: eq(member.userId, userSession.userId),
+            orderBy: desc(member.createdAt),
+            columns: { organizationId: true }
+          })
+
+          return {
+            data: {
+              ...userSession,
+              activeOrganizationId: membership?.organizationId
+            }
+          }
+        }
+      }
+    }
   } 
 });
