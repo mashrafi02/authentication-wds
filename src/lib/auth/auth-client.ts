@@ -3,6 +3,7 @@ import { auth } from "./auth";
 import { inferAdditionalFields, twoFactorClient, adminClient, organizationClient } from "better-auth/client/plugins"
 import { passkeyClient } from "@better-auth/passkey/client"
 import { admin, user, ac } from "@/components/auth/permissions";
+import { stripeClient } from "@better-auth/stripe/client"
 
 
 export const authClient = createAuthClient({
@@ -19,5 +20,8 @@ export const authClient = createAuthClient({
             roles: {admin, user}
           }),
         organizationClient(),
+        stripeClient({
+            subscription: true 
+        })
     ]
 })

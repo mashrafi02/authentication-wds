@@ -13,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
     authClient.admin
-      .hasPermission({ permission: { user: ["list"] } })
+      .hasPermission({ permissions: { user: ["list"] } })
       .then(({data}) => {
         setHasAdminPermission(data?.success ?? false)
       })

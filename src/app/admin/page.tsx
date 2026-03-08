@@ -14,7 +14,7 @@ export default async function AdminPage() {
     if( session == null ) return redirect("/auth/login");
     const hasAccess = await auth.api.userHasPermission({
         headers: await headers(),
-        body: { permission: {user: ["list"] }}
+        body: { permissions: {user: ["list"] }}
     })
 
     if ( !hasAccess.success ) return redirect("/");
@@ -48,7 +48,7 @@ export default async function AdminPage() {
                                     <TableHead>User</TableHead>
                                     <TableHead>Role</TableHead>
                                     <TableHead>Created</TableHead>
-                                    <TableHead className="w-[100px]">Actions</TableHead>
+                                    <TableHead className="w-25">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

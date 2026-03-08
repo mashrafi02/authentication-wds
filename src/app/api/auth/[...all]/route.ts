@@ -13,7 +13,7 @@ const aj = arcjet({
     rules: [shield({mode: 'LIVE'})]
 });
 
-const botSettings = { mode: "LIVE", allow: [] } satisfies BotOptions;
+const botSettings = { mode: "LIVE", allow: ["STRIPE_WEBHOOK"] } satisfies BotOptions;
 
 const restrictiveRateLimitSettings = {
     mode: "LIVE",
@@ -43,6 +43,11 @@ const authHandlers = toNextJsHandler(auth);
 export const { GET } = authHandlers;
 
 export async function POST(req: Request) {
+    // Skip arcjet for Stripe webhooks - needs raw body for signature verification
+    if(req.url.includes("/stripe/webhook")) {
+        return authHandlers.POST(req)
+    }
+    
     const clonnedReq = req.clone();
 
     const decision = await checkArcjet(req);

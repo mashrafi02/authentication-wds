@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth/auth-client"
 import MembersTab from "./MembersTab";
 import InvitationsTab from "./InvitationsTab";
+import SubscriptionTab from "./SubscriptionTab";
 
 
 const OrganizationTabs = () => {
@@ -32,7 +33,7 @@ const OrganizationTabs = () => {
                   </TabsContent>
 
                   <TabsContent value="subscriptions">
-                    
+                    <SubscriptionTab />
                   </TabsContent>
                 </CardContent>
               </Card>
